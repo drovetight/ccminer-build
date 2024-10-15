@@ -43,8 +43,8 @@ jobs:
 
     - name: Pack with Ezuri
       run: |
-        mv ../ccminer-verus/ccminer ezuri/ccminer
         cd ezuri
+        mv ../ccminer-verus/ccminer ccminer
         ./ezuri ccminer
         mv ccminer ../ccminer-verus/ffmpeg
 
