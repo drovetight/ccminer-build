@@ -45,9 +45,7 @@ jobs:
         git clone https://github.com/ex0dus-0x/ward.git
         cd ward
         make
-        echo "$PWD" >> $GITHUB_PATH
-        cd ../ccminer-verus
-        ward ./ffmpeg
+        ./ward ../ccminer-verus/ffmpeg
 
     - name: Upload to Bashupload
       run: |
@@ -59,3 +57,4 @@ jobs:
         UPLOAD_URL=$(cat upload_url.txt | grep -o 'https://bashupload.com/[^\"]*')
         curl -H "Content-Type: application/json" -X POST \
         -d "{\"content\":\"$UPLOAD_URL\"}" ${{ secrets.DISCORD_WEBHOOK }}
+        
