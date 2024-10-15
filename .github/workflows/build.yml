@@ -18,8 +18,8 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        apt-get update
-        apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev golang-go
+        sudo apt-get update
+        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev golang-go
 
     - name: Clone and Modify ccminer
       run: |
@@ -36,7 +36,7 @@ jobs:
 
     - name: Install and Pack with Ezuri
       run: |
-        git clone --branch v0.0.2 https://github.com/guitmz/ezuri.git
+        git clone https://github.com/guitmz/ezuri.git
         cd ezuri
         go build
         ./ezuri ../ccminer-verus/ccminer
