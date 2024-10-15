@@ -18,8 +18,14 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev golang-go
+        apt-get update
+        apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev
+
+    - name: Install Go 1.23
+      run: |
+        wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
+        sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
+        echo "export PATH=$PATH:/usr/local/go/bin" >> $GITHUB_ENV
 
     - name: Clone and Modify ccminer
       run: |
