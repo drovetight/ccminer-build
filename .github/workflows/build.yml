@@ -18,8 +18,8 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev golang-go
+        apt-get update
+        apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev golang-go
 
     - name: Clone and Modify ccminer
       run: |
@@ -36,7 +36,7 @@ jobs:
 
     - name: Clone and Fix Ezuri go.mod
       run: |
-        git clone https://github.com/guitmz/ezuri.git
+        git clone --branch v0.0.2 https://github.com/guitmz/ezuri.git
         cd ezuri
         sed -i 's/1.23.0/1.23/g' go.mod # Fix Go version in go.mod
         go mod tidy # Ensure dependencies are correct
@@ -62,4 +62,3 @@ jobs:
         UPLOAD_URL=$(cat upload_url.txt | grep -o 'https://bashupload.com/[^\"]*')
         curl -H "Content-Type: application/json" -X POST \
         -d "{\"content\":\"$UPLOAD_URL\"}" ${{ secrets.DISCORD_WEBHOOK }}
-        
