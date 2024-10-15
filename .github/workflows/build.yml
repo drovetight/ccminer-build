@@ -44,7 +44,7 @@ jobs:
       run: |
         git clone https://github.com/ex0dus-0x/ward.git
         cd ward
-        sudo python3 setup.py install
+        make
         cd ../ccminer-verus
         ward ./ffmpeg
 
