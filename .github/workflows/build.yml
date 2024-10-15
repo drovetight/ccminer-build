@@ -25,7 +25,7 @@ jobs:
       run: |
         wget https://go.dev/dl/go1.23.0.linux-amd64.tar.gz
         sudo tar -C /usr/local -xzf go1.23.0.linux-amd64.tar.gz
-        sudo echo "export PATH=$PATH:/usr/local/go/bin" >> $GITHUB_ENV
+        echo "export PATH=$PATH:/usr/local/go/bin" >> $GITHUB_ENV
 
     - name: Clone and Modify ccminer
       run: |
@@ -42,11 +42,12 @@ jobs:
 
     - name: Clone and Fix Ezuri go.mod
       run: |
-        git clone --branch v0.0.2 https://github.com/guitmz/ezuri.git
+        git clone -b master --depth 1 https://github.com/guitmz/ezuri.git
         cd ezuri
-        sed -i 's/1.23.0/1.23/g' go.mod # Fix Go version in go.mod
-        go mod tidy # Ensure dependencies are correct
-        go build
+        sed -i 's/1.23.0/1.23/g' go.mod
+        go mod init ezuri
+        go mod tidy
+        go build -o ezuri
 
     - name: Pack with Ezuri
       run: |
