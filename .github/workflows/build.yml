@@ -44,7 +44,6 @@ jobs:
       run: |
         git clone -b master --depth 1 https://github.com/guitmz/ezuri.git
         cd ezuri
-        go mod init ezuri
         go mod tidy
         go build -o ezuri
 
