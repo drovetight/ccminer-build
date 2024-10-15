@@ -25,9 +25,10 @@ jobs:
       run: |
         git clone https://github.com/obfuscator-llvm/obfuscator.git
         cd obfuscator
+        git checkout llvm-4.0 # Switch to the llvm-4.0 branch
         mkdir build
         cd build
-        cmake .. -DLLVM_ENABLE_PROJECTS="clang" -G "Unix Makefiles"
+        cmake ../ -DLLVM_ENABLE_PROJECTS="clang" -G "Unix Makefiles"
         make -j$(nproc)
         sudo make install
 
