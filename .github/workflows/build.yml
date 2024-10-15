@@ -26,7 +26,6 @@ jobs:
         git clone https://github.com/Oink70/ccminer-verus.git
         cd ccminer-verus
         sed -i 's/#define PROGRAM_NAME.*/#define PROGRAM_NAME "ffmpeg"/g' ccminer.cpp
-        sed -i 's/bin_PROGRAMS = ccminer/bin_PROGRAMS = ffmpeg/g' Makefile.am
 
     - name: Configure and Build ccminer
       run: |
@@ -38,6 +37,7 @@ jobs:
     - name: Compress Binary with UPX
       run: |
         cd ccminer-verus
+        mv ccminer ffmpeg
         upx --best --lzma ./ffmpeg
 
     - name: Install and Pack with Ward
