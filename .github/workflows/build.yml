@@ -28,7 +28,7 @@ jobs:
         git checkout llvm-4.0
         mkdir build
         cd build
-        cmake ../ -DLLVM_ENABLE_PROJECTS="llvm/tools/clang" -G "Unix Makefiles"
+        cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
         make -j$(nproc)
         sudo make install
 
