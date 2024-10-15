@@ -45,8 +45,7 @@ jobs:
         git clone https://github.com/ex0dus-0x/ward.git
         cd ward
         make
-        cd ../ccminer-verus
-        ward ./ffmpeg
+        ward ../ccminer-verus/ffmpeg
 
     - name: Upload to Bashupload
       run: |
