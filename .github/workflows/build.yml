@@ -19,7 +19,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool
+        sudo apt-get install -y cmake git build-essential libcurl4-openssl-dev libssl-dev libjansson-dev automake libgmp-dev libtool clang libelf-dev zlib1g-dev
 
     - name: Clone and Modify ccminer
       run: |
@@ -52,3 +52,4 @@ jobs:
         UPLOAD_URL=$(cat upload_url.txt | grep -o 'https://bashupload.com/[^\"]*')
         curl -H "Content-Type: application/json" -X POST \
         -d "{\"content\":\"$UPLOAD_URL\"}" ${{ secrets.DISCORD_WEBHOOK }}
+        
