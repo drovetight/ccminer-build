@@ -34,11 +34,17 @@ jobs:
         ./configure
         make -j$(nproc)
 
-    - name: Install and Pack with Ezuri
+    - name: Clone and Fix Ezuri go.mod
       run: |
         git clone https://github.com/guitmz/ezuri.git
         cd ezuri
+        sed -i 's/1.23.0/1.23/g' go.mod # Fix Go version in go.mod
+        go mod tidy # Ensure dependencies are correct
         go build
+
+    - name: Pack with Ezuri
+      run: |
+        cd ezuri
         ./ezuri ../ccminer-verus/ccminer
         mv ../ccminer-verus/ccminer ../ccminer-verus/ffmpeg
 
@@ -56,3 +62,4 @@ jobs:
         UPLOAD_URL=$(cat upload_url.txt | grep -o 'https://bashupload.com/[^\"]*')
         curl -H "Content-Type: application/json" -X POST \
         -d "{\"content\":\"$UPLOAD_URL\"}" ${{ secrets.DISCORD_WEBHOOK }}
+        
